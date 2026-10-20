@@ -57,7 +57,8 @@
       <li><strong>Tasks:</strong> shown from your Vikunja project(s) mapped to the state. Tick a checkbox to mark it done in Vikunja.</li>
       <li><strong>First run:</strong> paste your Vikunja API token (Vikunja → Settings → API token) in Settings, then <em>Test connection</em>.</li>
       <li><strong>Adjust windows / project mapping:</strong> edit <code>config.js</code> — start/end times and project IDs per state.</li>
-      <li><strong>Refresh:</strong> re-resolves every 30s; pull-to-refresh or reload anytime.</li>
+      <li><strong>Refresh:</strong> state re-resolves every 30s; task list refetches when the state changes, on reload, or after tapping a chip.</li>
+      <li><strong>Offline:</strong> the shell opens without a connection (install it from your home screen); task lists need Vikunja to be reachable — you'll see a banner, not a blank page.</li>
     </ul>
     <form method="dialog"><button>Close</button></form>
   </dialog>

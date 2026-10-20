@@ -183,8 +183,7 @@ async function refresh() {
   }
   if (!token) {
     banner("no-token", "Add your Vikunja API token in Settings.");
-    $("settings").showModal();
-    $("token-input").focus();
+    openSettingsForToken();
     renderTasks([]);
     return;
   }
@@ -214,9 +213,39 @@ let base = "/vikunja-api";
 let override = null;
 let lastStateId = /** @type {string | null} */ (undefined);
 
+/**
+ * Auto-open Settings for the missing token exactly once per load,
+ * and never on top of the first-run guide (defers until guide closes).
+ * Later state changes: banner only (no popup).
+ */
+let settingsOffered = false;
+function openSettingsForToken() {
+  if (settingsOffered) return;
+  settingsOffered = true;
+  const open = () => {
+    const s = $("settings");
+    if (!s.open) {
+      s.showModal();
+      $("token-input").focus();
+    }
+  };
+  const g = $("guide");
+  if (g.open) g.addEventListener("close", open, { once: true });
+  else open();
+}
+
 function init() {
   loadPrefs();
   renderChips();
+
+  if (!localStorage.getItem("navigome.guideSeen")) {
+    $("guide").showModal();
+    $("guide").addEventListener(
+      "close",
+      () => localStorage.setItem("navigome.guideSeen", "1"),
+      { once: true },
+    );
+  }
 
   $("save-settings").addEventListener("click", () => {
     token = $("token-input").value.trim();
