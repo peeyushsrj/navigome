@@ -42,7 +42,7 @@ flowchart LR
     N -->|proxy_pass| V[Vikunja :3456]
 ```
 
-- `config.js` — the only edit point: state windows (`"HH:MM"`, night wraps midnight) and `projects: [ids]` mapping (morning `[14,12]`, daytime `[6,7,10]`, sunset `[15]`, evening `[10,11]`, night `[13]`).
+- `config.js` — the only edit point: state windows (`"HH:MM"`, night wraps midnight) and `projects: [ids]` mapping (morning `[14,12]`, daytime `[6,7]`, sunset `[15]`, evening `[10,11]`, night `[13]`).
 - `statemachine.js` — pure time logic (unit-tested); `vikunja.js` — REST client (10s timeouts, strategy ladder for task filters); `app.js` — DOM glue; `sw.js` — offline shell (never caches API results on error).
 - State switching: auto by clock; chip tap = override until that window's boundary (`localStorage navigome.override`).
 
