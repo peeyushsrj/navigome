@@ -24,7 +24,8 @@ Gate: ⛔ **No implementation until user approves spec AND Pi is up.**
 - [ ] P2: `statemachine.js` + `statemachine.test.js` — `node --test` green (window match, midnight wrap, override expiry, next transition)
 - [x] P3: folded into plan (see above) — live endpoints + project IDs resolved 2026-10-20
 - [ ] P4: `app.js` — clock/resolve loop, state chips, task list, complete-toggle, settings (token, API base, test connection), error banners (401 / timeout)
-- [ ] P5: PWA — `manifest.webmanifest`, icons, `sw.js` (cache shell, network-first tasks)
+- [ ] P5: ~~override-expiry + edge pass~~ ✅ 2026-10-20 (headless E2E): auto-select ✓, manual override ✓, boundary revert w/o reload ✓, 401 banner ✓, unreachable banner ✓ — pending: guide first-run (P6/P7), phone+nginx (P8)
+- [ ] P6: PWA — `manifest.webmanifest`, icons, `sw.js` (cache shell, network-first tasks)
 - [ ] P6: in-app guide overlay (first-load + `?`)
 - [ ] P7: browser verification checklist (spec §6) incl. phone standalone install
 - [ ] P8: Pi deploy — rsync to `/var/www/navigome/`, nginx locations (`/navigome/`, `/vikunja-api/`) — sudo, confirm with user; verify no CORS errors
