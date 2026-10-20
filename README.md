@@ -1,21 +1,44 @@
 # Navigome
 
-Time-of-day **life-state** launcher over [Vikunja](https://vikunja.io). The clock picks your current state (morning · spiritual → daytime · work+errands → sunset · nature → evening · errands → night · self-care); the app lists the Vikunja tasks mapped to it. Tap a state chip to take over manually — the override holds until that state's window ends, then the clock resumes.
+**State-based project management.** Your task list shouldn't be one undifferentiated wall — it should match what kind of day-part you're in.
 
-Static HTML + vanilla JS (no build step), PWA-installable, served behind nginx next to Vikunja on the Pi.
+Navigome maps the clock to a *life state* (morning · spiritual, daytime · work + errands, sunset · nature, evening · errands, night · self-care) and shows only the [Vikunja](https://vikunja.io) tasks belonging to that state. Tap a chip to take over manually; the override holds until that state's window ends, then the clock resumes.
 
-## Run (dev)
+Static HTML + vanilla JS (no build step), installable as a PWA, served behind nginx next to Vikunja.
 
-```sh
-python3 -m http.server 8901        # from this directory
-# open http://127.0.0.1:8901/
+```
+┌──────────────────────────────────────────┐
+│  Sunset · Nature          manual — 18:30 │
+│  18:12                        next 18:30 │
+│  [Morning] [Daytime] [Sunset] [Evening]  │
+│  ─────────────────────────────────────── │
+│  ☐  Walk by the lake                •••  │
+│  ☑  Water the plants                     │
+└──────────────────────────────────────────┘
 ```
 
-First load: paste your Vikunja API token (Vikunja → Settings → API token) in Settings, set **API base** to `http://192.168.1.38:3456` for direct LAN, *Test connection* → Save. (Direct LAN needs the browser to reach the Pi; on a Mac with Sophos web protection, browser→private-IP traffic may be intercepted — use the nginx path below or whitelist the Pi.)
+## States
 
-## Run (prod, on the Pi)
+| State | Window (default) | Vikunja projects (default) |
+|---|---|---|
+| Morning · Spiritual | 05:00 – 09:00 | Spiritual |
+| Daytime · Work + Errands | 09:00 – 17:30 | Work, Errands |
+| Sunset · Nature | 17:30 – 18:30 | Nature |
+| Evening · Errands | 18:30 – 21:30 | Errands, Home |
+| Night · Self-care | 21:30 – 05:00 (wraps midnight) | Self-care |
 
-App at `http://192.168.1.38/navigome/`, API proxied same-origin at `/vikunja-api/` (default base — no CORS, no token origin issues):
+Everything is edited in one file — `config.js`. Each state is `{ id, name, window: ["HH:MM","HH:MM"], projects: [vikunjaProjectIds], color }`.
+
+## Quick start
+
+1. Serve the folder (any static server, or nginx — see below).
+2. Open the app and paste a Vikunja **API token** (Vikunja → Settings → API Tokens) into **Settings**; *Test connection* → Save.
+3. Optionally point **API base** at your Vikunja instance (defaults to `/vikunja-api`, the same-origin proxy).
+4. On a phone: **Add to Home Screen** — it launches standalone and works offline for the shell.
+
+The token lives only in that browser's `localStorage`. Nothing credential-like is stored in this repo, and the same-origin proxy means the token never crosses a CORS boundary.
+
+## Deploy (nginx + Vikunja on one box)
 
 ```nginx
 location /navigome/ {
@@ -23,42 +46,59 @@ location /navigome/ {
     try_files $uri $uri/ /navigome/index.html;
 }
 location /vikunja-api/ {
-    proxy_pass http://127.0.0.1:3456/;   # trailing slash strips the prefix
+    proxy_pass http://127.0.0.1:3456/;          # trailing slash strips the prefix
     proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+}
+# nginx has no .webmanifest in mime.types — Chrome ignores the wrong MIME
+location = /navigome/manifest.webmanifest {
+    alias /var/www/navigome/manifest.webmanifest;
+    default_type application/manifest+json;
+    add_header Cache-Control "no-cache";
 }
 ```
 
-Deploy: `rsync -a --exclude .git --exclude .superpowers --exclude docs/ --exclude TASKS.md ./ pi:/var/www/navigome/`
+Ship it:
 
-After deploying changed files, **bump `CACHE` in `sw.js`** (e.g. `navigome-v2`) — the service worker is cache-first for the shell, so client browsers keep the old files until the cache name changes.
+```sh
+rsync -a --exclude .git --exclude docs --exclude .superpowers --exclude TASKS.md ./ <pi>:/var/www/navigome/
+```
+
+**Always bump `CACHE` in `sw.js` when the shell changes** (e.g. `navigome-v3` → `navigome-v4`). The service worker is cache-first for app files; without a new cache name, installed clients keep the old build. `sw.js`, `index.html`, `config.js` and the manifest are served `no-cache`, so the worker itself is re-checked on every load and updates self-apply with one automatic reload after the first open.
 
 ## Architecture
 
 ```mermaid
 flowchart LR
-    B[Phone / browser] -->|GET ./ statics| N[nginx :80 Pi]
+    B[Phone / browser] -->|GET /navigome/*| N[nginx]
     B -->|fetch /vikunja-api/*| N
     N -->|alias| S["/var/www/navigome/"]
     N -->|proxy_pass| V[Vikunja :3456]
 ```
 
-- `config.js` — the only edit point: state windows (`"HH:MM"`, night wraps midnight) and `projects: [ids]` mapping (morning `[14,12]`, daytime `[6,7]`, sunset `[15]`, evening `[10,11]`, night `[13]`).
-- `statemachine.js` — pure time logic (unit-tested); `vikunja.js` — REST client (10s timeouts, strategy ladder for task filters); `app.js` — DOM glue; `sw.js` — offline shell (never caches API results on error).
-- State switching: auto by clock; chip tap = override until that window's boundary (`localStorage navigome.override`).
-
-## Config
-
-| localStorage key | purpose |
+| File | Role |
 |---|---|
-| `navigome.token` | Vikunja API token (Settings) |
-| `navigome.apiBase` | `/vikunja-api` (default) or `http://192.168.1.38:3456` |
-| `navigome.override` | manual state override + expiry |
-| `navigome.guideSeen` | first-run guide shown |
+| `config.js` | state windows + Vikunja project mapping — the only file you normally edit |
+| `statemachine.js` | pure time logic: window match, midnight wrap, override expiry, next transition |
+| `vikunja.js` | REST client: 10 s timeouts, bearer auth, filter syntax + fallbacks, done-toggle |
+| `app.js` | DOM glue: clock tick, state chips, task rows, settings, banners |
+| `sw.js` | offline shell (cache-first statics, network-first API, never caches errors) |
+| `tools/gen_icons.py` | stdlib-only PNG icon generator |
 
-## Tests
+**Behaviour details**
+
+- Resolution runs every 30 s; the clock and next transition tick every second.
+- The list refetches only when the resolved state changes (or on reload / chip tap).
+- A manual override is stored with an absolute expiry (`validUntil`), so it survives reloads and ends exactly at the state boundary.
+- Checkbox toggles are optimistic: the row flips instantly, and reverts with a banner if Vikunja rejects the write.
+- Failure modes are explicit: missing token → Settings opens with a banner; unreachable API → banner and the last good list stays on screen; unmapped state → banner, empty list.
+
+## Develop
 
 ```sh
-node --test statemachine.test.js   # 12 tests: windows, midnight wrap, override expiry, transitions
+python3 -m http.server 8901     # http://127.0.0.1:8901/
+node --test statemachine.test.js
+python3 tools/gen_icons.py
 ```
 
-Icons: `python3 tools/gen_icons.py` (stdlib-only PNG generator).
+No dependencies, no bundler, no framework. ES modules straight in the browser.
