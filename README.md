@@ -30,6 +30,8 @@ location /vikunja-api/ {
 
 Deploy: `rsync -a --exclude .git --exclude .superpowers --exclude docs/ --exclude TASKS.md ./ pi:/var/www/navigome/`
 
+After deploying changed files, **bump `CACHE` in `sw.js`** (e.g. `navigome-v2`) — the service worker is cache-first for the shell, so client browsers keep the old files until the cache name changes.
+
 ## Architecture
 
 ```mermaid

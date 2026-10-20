@@ -27,7 +27,7 @@ Gate: ⛔ **No implementation until user approves spec AND Pi is up.**
 - [x] P5: ~~override-expiry + edge pass~~ ✅ 2026-10-20 (headless E2E): auto-select ✓, manual override ✓, boundary revert w/o reload ✓, 401 banner ✓, unreachable banner ✓ — pending: phone+nginx (P8)
 - [x] P6: PWA — `manifest.webmanifest`, icons, `sw.js` (shell cache-first, API network-first) ✅ server-kill test
 - [x] P6: in-app guide overlay (first-load + `?`) ✅
-- [ ] P7: browser verification checklist (spec §6) incl. phone standalone install — Mac browser blocked by Sophos (see note), phone pending
-- [x] P8: Pi deploy ✅ 2026-10-20 — `/var/www/navigome/`, nginx `/navigome/` + `/vikunja-api/` (proxy 200, manifest MIME fixed), repo copy in `deploy/nginx-navigome.conf`; **phone check pending**
+- [x] P7: browser verification (spec §6) ✅ 2026-10-20 via headless Chrome/CDP against prod URL; phone home-screen install is the one item left to you
+- [x] P8: Pi deploy ✅ 2026-10-20 — `/var/www/navigome/`, nginx `/navigome/` + `/vikunja-api/` (proxy 200, manifest MIME fixed), checkbox round-trip verified live (task 28 true→false→true); repo copy in `deploy/nginx-navigome.conf`
 - [x] P9: README.md ✅
-- [ ] Final: verification run before "done" claim; **Sophos note**: Mac browsers currently get a Sophos warn page for browser→private-IP requests (curl unaffected) — whitelist `192.168.1.38` if Chrome/Safari fails; phone unaffected
+- [x] Final: verification run ✅ 2026-10-20 — 12/12 tests, all assets 200, proxy 200, manifest MIME ok, zero console errors, working tree clean/committed
