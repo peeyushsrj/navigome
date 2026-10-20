@@ -2,3 +2,5 @@
 .mask-map.json
 docs/superpowers/specs/*.local.md
 .seed.html
+token.json
+token.local.json

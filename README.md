@@ -38,6 +38,35 @@ Everything is edited in one file — `config.js`. Each state is `{ id, name, win
 
 The token lives only in that browser's `localStorage`. Nothing credential-like is stored in this repo, and the same-origin proxy means the token never crosses a CORS boundary.
 
+## Auto-token (skip the token prompt)
+
+By default the app asks for a token once per browser — so a new phone, a cleared cache, or a private window asks again. If you run this on a LAN you control, you can serve the token from a tiny endpoint instead:
+
+```sh
+# on the Pi — the single file where the token lives
+sudo install -d -m 755 /etc/navigome
+printf '{ "token": "tk_your_vikunja_token" }\n' | sudo tee /etc/navigome/token >/dev/null
+sudo chmod 644 /etc/navigome/token
+```
+
+```nginx
+location = /navigome/token.json {
+    alias /etc/navigome/token;          # outside the webroot
+    default_type application/json;
+    add_header Cache-Control "no-store";
+}
+```
+
+**To change the token later:** re-run the `printf … | sudo tee /etc/navigome/token` line. No nginx reload, no cache bump — the endpoint is read per request, `no-store`, and the service worker never caches it.
+
+How it behaves:
+
+- Only fetched when the browser has no stored token; the result is kept in memory for that page (nothing is written back to `localStorage`).
+- If the endpoint is missing or fails, the app falls back to the normal Settings prompt.
+- Disable it entirely by setting `tokenUrl: ""` in `config.js`.
+
+**Security.** The endpoint is unauthenticated: anyone who can load `/navigome/` can read the token. Keep it LAN-only (or behind auth), use a dedicated Vikunja token you can revoke, never commit it (`token.json` is gitignored and excluded from the deploy rsync), and don't expose this host to the internet.
+
 ## Deploy (nginx + Vikunja on one box)
 
 ```nginx

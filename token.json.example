@@ -1,0 +1,4 @@
+{
+  "_comment": "Copy to the Pi as /etc/navigome/token (NOT into this repo, NOT into the webroot). Never commit a real token.",
+  "token": "tk_your_vikunja_api_token_here"
+}

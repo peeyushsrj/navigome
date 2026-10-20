@@ -234,7 +234,24 @@ function openSettingsForToken() {
   else open();
 }
 
-function init() {
+/**
+ * If this browser has no token, fetch the optional auto-token endpoint once.
+ * Keeps the token in memory only — nothing is written to localStorage, so a
+ * cached/cleared browser still works. Failure falls back to manual Settings.
+ */
+async function bootstrapToken() {
+  if (token || !config.tokenUrl) return;
+  try {
+    const res = await fetch(config.tokenUrl, { cache: "no-store" });
+    if (!res.ok) return;
+    const data = await res.json();
+    if (typeof data.token === "string" && data.token.trim()) token = data.token.trim();
+  } catch {
+    /* endpoint missing or unreachable → manual entry path */
+  }
+}
+
+async function init() {
   loadPrefs();
   renderChips();
 
@@ -262,12 +279,13 @@ function init() {
   });
   $("help-btn").addEventListener("click", () => $("guide").showModal());
 
+  await bootstrapToken();
   void tick(true); // first load: renders header + fetches (opens Settings if no token)
   setInterval(() => void tick(), 1000);
   setInterval(() => void tick(), 30000);
 }
 
-init();
+void init();
 
 if (location.protocol !== "file:" && "serviceWorker" in navigator) {
   let hadController = Boolean(navigator.serviceWorker.controller);
