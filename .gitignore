@@ -1,3 +1,4 @@
 .supermemory/
 .mask-map.json
 docs/superpowers/specs/*.local.md
+.seed.html
