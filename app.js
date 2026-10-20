@@ -270,5 +270,19 @@ function init() {
 init();
 
 if (location.protocol !== "file:" && "serviceWorker" in navigator) {
-  navigator.serviceWorker.register("./sw.js").catch(() => {});
+  let hadController = Boolean(navigator.serviceWorker.controller);
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    // First install: no reload needed. Later updates: reload once so the new shell takes over.
+    if (!hadController) {
+      hadController = true;
+      return;
+    }
+    if (sessionStorage.getItem("navigome.reloaded")) return;
+    sessionStorage.setItem("navigome.reloaded", "1");
+    location.reload();
+  });
+  navigator.serviceWorker
+    .register("./sw.js", { updateViaCache: "none" })
+    .then((reg) => reg.update().catch(() => {}))
+    .catch(() => {});
 }

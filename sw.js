@@ -1,5 +1,5 @@
 /* Navigome service worker: cache the app shell, never cache API results on error. */
-const CACHE = "navigome-v2";
+const CACHE = "navigome-v3";
 const SHELL = [
   "./",
   "./index.html",
