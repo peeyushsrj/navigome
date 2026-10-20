@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Navigome</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <header>
+    <div class="head-row">
+      <h1 id="state-name">…</h1>
+      <span id="override-badge" class="badge" hidden>manual</span>
+    </div>
+    <div class="head-sub">
+      <span id="clock">--:--</span>
+      <span id="next-transition">next —</span>
+    </div>
+  </header>
+
+  <nav id="chips" aria-label="Life states"></nav>
+
+  <div id="banner" role="alert" hidden></div>
+
+  <main>
+    <ul id="task-list">
+      <li class="empty">Loading…</li>
+    </ul>
+  </main>
+
+  <button id="help-btn" class="fab" type="button" aria-label="Guide">?</button>
+
+  <dialog id="settings">
+    <form method="dialog">
+      <h2>Settings</h2>
+      <label for="token-input">Vikunja API token</label>
+      <input id="token-input" type="password" autocomplete="off" placeholder="paste token">
+      <label for="api-input">API base URL</label>
+      <input id="api-input" type="text" placeholder="/vikunja-api">
+      <div class="row">
+        <button id="test-conn" type="button">Test connection</button>
+        <button id="save-settings" value="save">Save</button>
+        <button value="cancel" formnovalidate>Cancel</button>
+      </div>
+      <p id="conn-result" aria-live="polite"></p>
+    </form>
+  </dialog>
+
+  <dialog id="guide">
+    <h2>How to use Navigome</h2>
+    <ul class="guide-copy">
+      <li><strong>States:</strong> morning (spiritual) · daytime (work + errands) · sunset (nature) · evening (errands) · night (self-care). The clock picks the active state from its time window.</li>
+      <li><strong>Override:</strong> tap any state chip to hold it manually until that state's window ends — then the clock takes over again automatically.</li>
+      <li><strong>Tasks:</strong> shown from your Vikunja project(s) mapped to the state. Tick a checkbox to mark it done in Vikunja.</li>
+      <li><strong>First run:</strong> paste your Vikunja API token (Vikunja → Settings → API token) in Settings, then <em>Test connection</em>.</li>
+      <li><strong>Adjust windows / project mapping:</strong> edit <code>config.js</code> — start/end times and project IDs per state.</li>
+      <li><strong>Refresh:</strong> re-resolves every 30s; pull-to-refresh or reload anytime.</li>
+    </ul>
+    <form method="dialog"><button>Close</button></form>
+  </dialog>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

@@ -11,15 +11,18 @@ Gate: ⛔ **No implementation until user approves spec AND Pi is up.**
 - [x] Q2: switching = auto clock + manual override until window boundary
 - [x] Q3: stack = static HTML (+PWA) behind nginx on Pi, Vikunja proxied same-origin
 - [x] Write spec
-- [ ] Spec self-review (inline fixes)
-- [ ] **User reviews spec + approves** ⛔ (also gated on Pi up)
+- [x] Spec self-review (inline fixes)
+- [x] **User reviews spec + approves** ✅ 2026-10-20
+- [x] Created Vikunja projects: 14 Spiritual, 15 Nature (v2.7 quirk: create = `PUT /api/v1/projects`)
+- [x] Writing-plans → `docs/superpowers/plans/2026-10-20-navigome.md`
 
 ## Stage — Implementation (after approval; invoke writing-plans first)
 
-- [ ] P0: ✅ Pi reachable, Vikunja active + API auth-live (2026-10-20). ⚠️ nginx NOT installed on Pi → install step added to P8 (sudo, confirm with user)
+- [x] P0: ✅ Pi reachable, Vikunja active + API auth-live (2026-10-20). nginx already running on :80 (earlier "not found" = PATH quirk) → P8 = add locations, no install
+- [x] P3 (folded into plan): projects 14/15 created; list=`GET /tasks?filter=`, toggle=`POST /tasks/{id}` verified from live swagger
 - [ ] P1: scaffold static app (`index.html`, `style.css`, `config.js` — default windows, projectIds TBD)
 - [ ] P2: `statemachine.js` + `statemachine.test.js` — `node --test` green (window match, midnight wrap, override expiry, next transition)
-- [ ] P3: Vikunja discovery on live server: `GET /api/v1/projects` → map 5 states → project IDs into `config.js`; confirm tasks-by-project + toggle-done endpoints from `/api/v1/docs`
+- [x] P3: folded into plan (see above) — live endpoints + project IDs resolved 2026-10-20
 - [ ] P4: `app.js` — clock/resolve loop, state chips, task list, complete-toggle, settings (token, API base, test connection), error banners (401 / timeout)
 - [ ] P5: PWA — `manifest.webmanifest`, icons, `sw.js` (cache shell, network-first tasks)
 - [ ] P6: in-app guide overlay (first-load + `?`)

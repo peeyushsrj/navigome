@@ -1,0 +1,8 @@
+{
+  "name": "navigome",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test statemachine.test.js"
+  }
+}

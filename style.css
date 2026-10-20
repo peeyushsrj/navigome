@@ -1,0 +1,85 @@
+:root {
+  --bg: #101418;
+  --fg: #e6e6e6;
+  --muted: #9aa4ad;
+  --card: #1a2027;
+  --border: #2b333c;
+  --accent: #3a86ff;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  padding: 16px;
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 0.9em;
+  line-height: 1.45;
+  background: var(--bg);
+  color: var(--fg);
+}
+h1 { font-size: 1.4em; margin: 0; }
+h2 { font-size: 1.1em; margin: 0 0 8px; }
+header { padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+.head-row { display: flex; align-items: center; gap: 8px; }
+.head-sub { display: flex; justify-content: space-between; color: var(--muted); font-size: 0.85em; }
+#state-name { border-left: 4px solid var(--state-color, var(--accent)); padding-left: 8px; }
+.badge {
+  font-size: 0.7em; padding: 2px 6px; border-radius: 8px;
+  background: var(--accent); color: #fff;
+}
+#chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 12px 0; }
+.chip {
+  border: 1px solid var(--border); background: var(--card);
+  color: var(--fg); border-radius: 14px; padding: 6px 12px;
+  font-size: 0.85em; cursor: pointer;
+}
+.chip.active {
+  border-color: var(--chip-color);
+  box-shadow: inset 0 0 0 1px var(--chip-color);
+  color: var(--chip-color);
+}
+#banner {
+  background: #4a1f1f; color: #ffd7d7; border: 1px solid #7a3030;
+  border-radius: 6px; padding: 8px 12px; margin-bottom: 10px; font-size: 0.85em;
+}
+#banner.ok { background: #16381f; color: #c9f2d4; border-color: #2c5c3a; }
+#task-list { list-style: none; margin: 0; padding: 0; }
+#task-list li {
+  display: flex; align-items: baseline; gap: 10px;
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 8px; padding: 10px 12px; margin-bottom: 8px;
+}
+#task-list li.done .title { text-decoration: line-through; color: var(--muted); }
+#task-list li.empty { display: block; color: var(--muted); text-align: center; }
+.title { flex: 1; }
+.due { color: var(--muted); font-size: 0.8em; }
+.prio { color: var(--accent); font-size: 0.8em; letter-spacing: 1px; }
+input[type="checkbox"] { accent-color: var(--accent); }
+.fab {
+  position: fixed; right: 16px; bottom: 16px;
+  width: 40px; height: 40px; border-radius: 50%;
+  background: var(--accent); color: #fff; border: none;
+  font-size: 1.1em; cursor: pointer;
+}
+dialog {
+  border: 1px solid var(--border); border-radius: 10px;
+  background: var(--bg); color: var(--fg);
+  max-width: min(420px, 92vw); padding: 16px;
+}
+dialog::backdrop { background: rgba(0,0,0,.6); }
+dialog label { display: block; margin: 8px 0 2px; font-size: 0.85em; color: var(--muted); }
+dialog input {
+  width: 100%; padding: 6px 8px; border-radius: 6px;
+  border: 1px solid var(--border); background: var(--card); color: var(--fg);
+}
+dialog .row { display: flex; gap: 8px; margin-top: 12px; }
+dialog button {
+  padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border);
+  background: var(--card); color: var(--fg); cursor: pointer;
+}
+#save-settings { background: var(--accent); border-color: var(--accent); color: #fff; }
+#conn-result { font-size: 0.8em; color: var(--muted); min-height: 1em; margin: 8px 0 0; }
+.guide-copy { padding-left: 18px; }
+.guide-copy li { margin-bottom: 8px; font-size: 0.9em; }
+code { background: var(--card); padding: 1px 4px; border-radius: 4px; font-size: 0.85em; }
+@media (max-width: 480px) { body { padding: 12px; } }
