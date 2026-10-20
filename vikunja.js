@@ -1,6 +1,6 @@
 /**
  * Vikunja REST client. Every call: 10s abort timeout, Bearer auth.
- * Verified live 2026-10-20 on Vikunja v2.7.0 (192.168.1.38:3456):
+ * Verified live 2026-10-20 on Vikunja v2.7.0:
  * - OR filter `project_id = 14 || project_id = 12` → 200 (PRIMARY strategy)
  * - POST /api/v1/tasks/{id} {"done":bool} round-trips
  * - due_date arrives as zero-date sentinel "0001-01-01T00:00:00Z", never null
@@ -22,7 +22,7 @@ export class VikunjaError extends Error {
 }
 
 /**
- * @param {string} base e.g. "/vikunja-api" or "http://192.168.1.38:3456"
+ * @param {string} base e.g. "/vikunja-api" or "http://vikunja.local:3456"
  * @param {string} token API token
  * @param {string} path e.g. "/api/v1/projects"
  * @param {RequestInit} [init]
